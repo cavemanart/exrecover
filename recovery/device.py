@@ -1,25 +1,56 @@
 import subprocess
+import platform
 
 
 def list_devices():
 
-    result=subprocess.run(
-        [
-            "diskutil",
-            "list"
-        ],
-        capture_output=True,
-        text=True
-    )
+    system = platform.system()
 
-    devices=[]
+    devices = []
 
-    for line in result.stdout.splitlines():
 
-        if "/dev/disk" in line:
+    if system == "Darwin":
 
-            devices.append(
-                line.strip()
-            )
+        result = subprocess.run(
+            [
+                "diskutil",
+                "list"
+            ],
+            capture_output=True,
+            text=True
+        )
+
+
+        for line in result.stdout.splitlines():
+
+            if "/dev/disk" in line:
+
+                devices.append(
+                    line.strip()
+                )
+
+
+    elif system == "Linux":
+
+        result = subprocess.run(
+            [
+                "lsblk",
+                "-o",
+                "NAME,SIZE,TYPE,MOUNTPOINT"
+            ],
+            capture_output=True,
+            text=True
+        )
+
+
+        devices = result.stdout.splitlines()
+
+
+    else:
+
+        devices.append(
+            "Unsupported OS: " + system
+        )
+
 
     return devices
