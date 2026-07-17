@@ -1,0 +1,6 @@
+streamlit
+pandas
+pytsk3
+opencv-python
+pillow
+tqdm
